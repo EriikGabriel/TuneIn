@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:projeto_final/models/authenticate.dart';
 import 'package:projeto_final/theme/app_theme.dart';
 import 'package:projeto_final/types/login.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
@@ -275,11 +276,12 @@ class _LoginPageState extends State<LoginPage> {
                                     Navigator.pushNamed(context, '/main');
                                   }
 
-                                  // await Authenticate().sign(
-                                  //   email: _emailController.text,
-                                  //   password: _passwordController.text,
-                                  //   mode: _mode,
-                                  // );
+                                  await Authenticate().sign(
+                                    email: _emailController.text,
+                                    password: _passwordController.text,
+                                    mode: _mode,
+                                  );
+                                  print('ajuda');
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: primaryText,

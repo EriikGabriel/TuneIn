@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:projeto_final/pages/login_page.dart';
 import 'package:projeto_final/pages/main_page.dart';
 import 'package:projeto_final/theme/app_theme.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
-void main() {
+Future<void> main() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MainApp());
 }
 
