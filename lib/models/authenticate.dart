@@ -27,7 +27,7 @@ class Authenticate {
       }
     } on FirebaseAuthException catch (e) {
       // Handle specific Firebase authentication errors here
-      print('Error: ${e.message}');
+      print('FirebaseAuthException: ${e.message}');
       return null;
     }
   }

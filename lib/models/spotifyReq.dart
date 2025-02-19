@@ -41,7 +41,15 @@ class Spotifyreq {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      return data['tracks']['items'];
+        
+      return data['tracks']['items'].map<String>((track) {
+        String name = track['name'];
+        String artist = track['artists'][0]['name'];
+        String imageUrl = track['album']['images'][0]['url'];
+
+
+        return "$artist - $name - $imageUrl";
+      }).toList();
     } else {
       throw Exception('Erro ao buscar músicas com a API do Spotify');
     }

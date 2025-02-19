@@ -272,16 +272,15 @@ class _LoginPageState extends State<LoginPage> {
                               height: 40,
                               child: ElevatedButton(
                                 onPressed: () async {
-                                  if (_mode == LoginMode.signIn) {
-                                    Navigator.pushNamed(context, '/main');
-                                  }
-
-                                  await Authenticate().sign(
+                                  var user = await Authenticate().sign(
                                     email: _emailController.text,
                                     password: _passwordController.text,
                                     mode: _mode,
                                   );
-                                  print('ajuda');
+
+                                  if (user != null) {
+                                    Navigator.pushNamed(context, '/main');
+                                  }
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: primaryText,

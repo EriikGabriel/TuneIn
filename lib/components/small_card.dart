@@ -12,7 +12,6 @@ class SmallCard extends StatefulWidget {
 class _SmallCardState extends State<SmallCard> {
   @override
   Widget build(BuildContext context) {
-    // Você pode definir suas cores no ThemeData ou usar cores fixas
     final primaryBackground = Theme.of(context).colorScheme.primaryBackground;
     final secondaryBackground =
         Theme.of(context).colorScheme.secondaryBackground;

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:projeto_final/components/music_genre_card.dart';
+import 'package:projeto_final/models/spotifyReq.dart';
 import 'package:projeto_final/theme/app_theme.dart';
 import 'package:projeto_final/types/musical_genre.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
@@ -17,6 +18,9 @@ class _SearchPageState extends State<SearchPage> {
   final TextEditingController _textController = TextEditingController();
   final FocusNode _textFieldFocusNode = FocusNode();
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  bool _isLoading = false;
+  List<dynamic> _searchResult = [];
+  bool _searched = false;
 
   @override
   void dispose() {
@@ -61,7 +65,7 @@ class _SearchPageState extends State<SearchPage> {
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: SizedBox(
                     height: MediaQuery.of(context).size.height * 0.6,
-                    child: _buildGrid(),
+                    child: _buildContent(),
                   ),
                 ),
               ),
@@ -117,6 +121,14 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
+  Widget _buildContent() {
+  if (_searched) {
+    return _buildSearchResult();
+  } else {
+    return _buildGrid();
+  }
+}
+
   Widget _buildSearchBar() {
     final secondaryBackground =
         Theme.of(context).colorScheme.secondaryBackground;
@@ -148,7 +160,45 @@ class _SearchPageState extends State<SearchPage> {
       ),
       style: TextStyle(color: primaryText),
       cursorColor: primaryText,
+      onSubmitted: (query) async {
+        setState(() {
+          _isLoading = true;
+          _searched = true;
+        });
+
+        try {
+          Spotifyreq spotifyreq = Spotifyreq();
+
+          _searchResult = await spotifyreq.searchTracks(query);
+
+          setState(() {
+          _isLoading = false;
+          });
+
+        }catch (e) {
+          print('Erro durante a busca: $e');
+        }
+      },
     );
+  }
+
+  Widget _buildSearchResult(){
+    if (_isLoading) {
+      return Center(child: CircularProgressIndicator());
+    } 
+    else if(_searchResult.isEmpty){
+      return Center(child: Text('No results.'),);
+    }
+    else{
+      return ListView.builder(
+        itemCount: _searchResult.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(_searchResult[index]),
+          );
+        },
+      );
+    }
   }
 
   Widget _buildGrid() {
