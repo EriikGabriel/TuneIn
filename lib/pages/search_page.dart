@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:projeto_final/components/music_genre_card.dart';
+import 'package:projeto_final/components/music_item_card.dart';
 import 'package:projeto_final/models/spotifyReq.dart';
 import 'package:projeto_final/theme/app_theme.dart';
 import 'package:projeto_final/types/musical_genre.dart';
@@ -190,12 +191,16 @@ class _SearchPageState extends State<SearchPage> {
       return Center(child: Text('No results.'),);
     }
     else{
-      return ListView.builder(
-        itemCount: _searchResult.length,
+      return ListView.separated(
+        padding: EdgeInsets.zero,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: 5,
+        separatorBuilder:
+            (context, index) =>
+                const SizedBox(height: 10),
         itemBuilder: (context, index) {
-          return ListTile(
-            title: Text(_searchResult[index]),
-          );
+          return MusicItemCard(artist: _searchResult[index]['artist'], trackName: _searchResult[index]['name'], imageUrl: _searchResult[index]['imageUrl']);
         },
       );
     }

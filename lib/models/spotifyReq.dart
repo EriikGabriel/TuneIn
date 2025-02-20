@@ -29,7 +29,7 @@ class Spotifyreq {
 
 
 
-  Future<List<dynamic>> searchTracks(String query) async {
+    Future<List<Map<String, String>>> searchTracks(String query) async {
     if (_accessToken == null) {
       await _authenticate();
     }
@@ -41,17 +41,19 @@ class Spotifyreq {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-        
-      return data['tracks']['items'].map<String>((track) {
-        String name = track['name'];
-        String artist = track['artists'][0]['name'];
-        String imageUrl = track['album']['images'][0]['url'];
+      
+      List<dynamic> tracks = data['tracks']['items'];
 
-
-        return "$artist - $name - $imageUrl";
+      return tracks.map<Map<String, String>>((track) {
+        return {
+          'artist': track['artists'][0]['name'],
+          'name': track['name'],
+          'imageUrl': track['album']['images'][0]['url'],
+        };
       }).toList();
     } else {
       throw Exception('Erro ao buscar músicas com a API do Spotify');
     }
   }
+
 }

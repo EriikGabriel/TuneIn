@@ -4,7 +4,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:projeto_final/theme/app_theme.dart';
 
 class MusicItemCard extends StatefulWidget {
-  const MusicItemCard({super.key});
+  final String trackName;
+  final String artist;
+  final String imageUrl;
+  
+  const MusicItemCard({super.key, required this.trackName, required this.artist, required this.imageUrl});
 
   @override
   State<MusicItemCard> createState() => _MusicItemCardState();
@@ -55,7 +59,7 @@ class _MusicItemCardState extends State<MusicItemCard> {
                               tag: 'imageTag',
                               child: InteractiveViewer(
                                 child: Image.network(
-                                  'https://picsum.photos/seed/780/600',
+                                  widget.imageUrl,
                                   fit: BoxFit.contain,
                                 ),
                               ),
@@ -71,7 +75,7 @@ class _MusicItemCardState extends State<MusicItemCard> {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
                     child: CachedNetworkImage(
-                      imageUrl: 'https://picsum.photos/seed/780/600',
+                      imageUrl: widget.imageUrl,
                       width: 60,
                       height: 60,
                       fit: BoxFit.cover,
@@ -86,7 +90,7 @@ class _MusicItemCardState extends State<MusicItemCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    "Music Name",
+                    widget.trackName,
                     style: GoogleFonts.inter(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -103,7 +107,7 @@ class _MusicItemCardState extends State<MusicItemCard> {
                         color: secondaryText,
                       ),
                       Text(
-                        "Artista 1, Artista 2...",
+                        widget.artist,
                         style: GoogleFonts.inter(
                           fontSize: 16,
                           color: secondaryText,

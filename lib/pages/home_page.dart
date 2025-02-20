@@ -116,7 +116,7 @@ class _HomePageState extends State<HomePage> {
                                   (context, index) =>
                                       const SizedBox(height: 10),
                               itemBuilder: (context, index) {
-                                return const MusicItemCard();
+                                return const MusicItemCard(artist: "Raimundos", trackName: "A mais pedida", imageUrl: "https://media.istockphoto.com/id/1183921035/pt/vetorial/rock-sign-gesture-with-lightning-for-your-design.jpg?s=612x612&w=0&k=20&c=S4qUMiqM8azNm2VR71YLXxLnaHEw8hWM3nlRw9pePM4=");
                               },
                             ),
                           ],
