@@ -1,10 +1,13 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:projeto_final/models/authenticate.dart';
 import 'package:projeto_final/theme/app_theme.dart';
 import 'package:projeto_final/types/login.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
+
+
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -278,8 +281,29 @@ class _LoginPageState extends State<LoginPage> {
                                     mode: _mode,
                                   );
 
+
                                   if (user != null) {
+                                    ProviderScope.containerOf(context).read(userProvider.notifier).setUser(user);
                                     Navigator.pushNamed(context, '/main');
+                                  }
+                                  else{
+                                    showDialog(
+                                      context: context,
+                                      builder:(context) {
+                                        return AlertDialog(
+                                          title: Text("Error!"),
+                                          content: Text("Wrong user or password"),
+                                          actions: [
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text("Close Tab"),
+                                            )
+                                          ],
+                                        );
+                                      },
+                                    );
                                   }
                                 },
                                 style: ElevatedButton.styleFrom(

@@ -1,5 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:projeto_final/types/login.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+class UserNotifier extends StateNotifier<User?>{
+  UserNotifier() : super(null);
+
+  void setUser(User user){
+    state = user;
+  }
+
+}
+
+final userProvider = StateNotifierProvider<UserNotifier, User?>((ref) {
+  return UserNotifier();
+});
 
 class Authenticate {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -26,7 +40,6 @@ class Authenticate {
         throw Exception('Invalid mode: $mode');
       }
     } on FirebaseAuthException catch (e) {
-      // Handle specific Firebase authentication errors here
       print('FirebaseAuthException: ${e.message}');
       return null;
     }

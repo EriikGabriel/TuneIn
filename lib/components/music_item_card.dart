@@ -1,6 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:projeto_final/models/add_to_playlist.dart';
+import 'package:projeto_final/models/authenticate.dart';
 import 'package:projeto_final/theme/app_theme.dart';
 
 class MusicItemCard extends StatefulWidget {
@@ -134,9 +137,10 @@ class _MusicItemCardState extends State<MusicItemCard> {
               ),
               const SizedBox(width: 20),
               IconButton(
-                icon: Icon(Icons.more_vert, color: infoColor, size: 30),
+                icon: Icon(Icons.add, color: infoColor, size: 30),
                 onPressed: () {
-                  print('More pressed');
+                  final user = ProviderScope.containerOf(context).read(userProvider);
+                  BackendPlayList().addSong(widget.artist, widget.trackName, widget.imageUrl, user!);
                 },
               ),
             ],
