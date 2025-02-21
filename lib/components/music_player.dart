@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MusicPlayer extends StatefulWidget {
-  const MusicPlayer({Key? key}) : super(key: key);
+  const MusicPlayer({super.key});
 
   @override
   State<MusicPlayer> createState() => _MusicPlayerState();
