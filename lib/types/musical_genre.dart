@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 enum MusicalGenre {
@@ -35,28 +36,28 @@ final musicalGenreIcons = {
 String getGenreName(MusicalGenre genre) {
   switch (genre) {
     case MusicalGenre.danceElectronic:
-      return "Dance/Electronic";
+      return translate("danceEletronic");
     case MusicalGenre.rock:
-      return "Rock";
+      return translate("rock");
     case MusicalGenre.jazz:
-      return "Jazz";
+      return translate("jazz");
     case MusicalGenre.rhythmAndBlues:
-      return "Rhythm and Blues (R&B)";
+      return translate("r-and-b");
     case MusicalGenre.countryMusic:
-      return "Country Music";
+      return translate("country-music");
     case MusicalGenre.pop:
-      return "Pop";
+      return translate("pop");
     case MusicalGenre.hipHop:
-      return "Hip-hop";
+      return translate("hip-hop");
     case MusicalGenre.classicalMusic:
-      return "Classical Music";
+      return translate("classical");
     case MusicalGenre.reggae:
-      return "Reggae";
+      return translate("reggae");
     case MusicalGenre.bossaNova:
-      return "Bossa Nova";
+      return translate("bossa-nova");
     case MusicalGenre.samba:
-      return "Samba";
+      return translate("samba");
     case MusicalGenre.funk:
-      return "Funk";
+      return translate("funk");
   }
 }

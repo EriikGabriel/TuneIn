@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:projeto_final/theme/app_theme.dart';
 
@@ -48,7 +49,7 @@ class _SmallCardState extends State<SmallCard> {
           ),
 
           Text(
-            "My Playlist/Music",
+            translate("my-songs"),
             style: GoogleFonts.inter(
               fontSize: 16,
               fontWeight: FontWeight.w500,

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:projeto_final/models/auth_model.dart';
 import 'package:projeto_final/models/firebase_model.dart';
+import 'package:projeto_final/providers/user_provider.dart';
 import 'package:projeto_final/theme/app_theme.dart';
 
 class MusicItemCard extends ConsumerStatefulWidget {

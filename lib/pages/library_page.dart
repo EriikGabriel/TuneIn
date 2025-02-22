@@ -1,11 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:projeto_final/components/header.dart';
 import 'package:projeto_final/components/music_item_card.dart';
 import 'package:projeto_final/models/auth_model.dart';
 import 'package:projeto_final/models/firebase_model.dart';
+import 'package:projeto_final/providers/user_provider.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 
 class LibraryPage extends ConsumerWidget {
@@ -27,14 +29,14 @@ class LibraryPage extends ConsumerWidget {
                 height: 80,
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 alignment: Alignment.centerLeft,
-                child: Header(title: 'Library'),
+                child: Header(title: translate("library")),
               ),
               Padding(
                 padding: const EdgeInsets.all(20),
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: GradientText(
-                    'Your Playlist',
+                    translate("your-playlist"),
                     style: GoogleFonts.inter(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -60,9 +62,9 @@ class LibraryPage extends ConsumerWidget {
 
   Widget _buildReorderableList(User? user) {
     if (user == null) {
-      return const Center(
+      return Center(
         child: Text(
-          'User not logged in. Please log in to see your playlist.',
+          translate("user-not-logged-in-playlist"),
           style: TextStyle(color: Colors.white),
         ),
       );
@@ -83,9 +85,9 @@ class LibraryPage extends ConsumerWidget {
           );
         }
         if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(
+          return Center(
             child: Text(
-              "You don't have songs in your playlist. Search and add some!",
+              translate("dont-have-songs-playlist"),
               style: TextStyle(color: Colors.white),
             ),
           );

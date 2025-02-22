@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:toastification/toastification.dart';
 
 class UserMenu extends StatelessWidget {
@@ -45,10 +46,10 @@ class UserMenu extends StatelessWidget {
             Navigator.pushReplacementNamed(context, '/login');
           },
           child: Row(
-            children: const [
+            children: [
               Icon(Icons.logout, color: Colors.red),
               SizedBox(width: 10),
-              Text("Sair", style: TextStyle(color: Colors.red)),
+              Text(translate("log-out"), style: TextStyle(color: Colors.red)),
             ],
           ),
         ),

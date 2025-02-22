@@ -1,0 +1,53 @@
+{
+    "mandatory-field": "Mandatory Field!",
+    "success": "Sucess",
+    "user-created": "User Created",
+    "error": "Error",
+    "wrong-user-or-password": "Wrong user or password",
+    "something-wrong": "Something went wrong. Please try again",
+    "music-for-everyone": "Music for everyone",
+    "username": "Username",
+    "password": "Password",
+    "or": " OR ",
+    "continue-w-google": "Continue with Google",
+    "dont-have-account": "Don't have an account? ", 
+    "already-have-account": "Already have an account? ",
+
+
+    "recents": "Recents",
+    "explore-new-songs": "Explore new songs",
+    "home": "Home",
+    "no-recommendation": "No recommendations available",
+    
+
+
+    "library": "Library",
+    "your-playlist": "Your playlist",
+    "user-not-logged-in-playlist": "User not logged in. Please log in to see your playlist.",
+    "dont-have-songs-playlist": "You don't have songs in your playlist. Search and add some!",
+
+
+    "search": "Search",
+    "browse": "Browse all",
+    "wanna-play": "What do you want to play?",
+    "no-results": "No results",
+
+
+    "danceEletronic": "Dance/Electronic",
+    "rock": "Rock",
+    "jazz": "Jazz",
+    "r-and-b": "Rhythm and Blues (R&B)",
+    "country-music": "Country Music",
+    "pop": "Pop",
+    "hip-hop": "Hip-hop",
+    "classical": "Classical Music",
+    "reggae": "Reggae",
+    "bossa-nova": "Bossa Nova",
+    "samba": "Samba",
+    "funk": "Funk",
+    
+
+    "track-name": "Track name",
+    "my-songs": "My Songs",
+    "log-out": "Logout"
+}

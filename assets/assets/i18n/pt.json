@@ -1,0 +1,47 @@
+{
+    "mandatory-field": "Campo obrigatório!",
+    "success": "Sucesso",
+    "user-created": "Usuário criado",
+    "error": "Erro",
+    "wrong-user-or-password": "Usuário ou senha incorretos",
+    "something-wrong": "Algo deu errado. Por favor, tente novamente",
+    "music-for-everyone": "Música para todos",
+    "username": "Nome de usuário",
+    "password": "Senha",
+    "or": " OU ",
+    "continue-w-google": "Continuar com o Google",
+    "dont-have-account": "Não tem uma conta? ", 
+    "already-have-account": "Já tem uma conta? ",
+
+    "recents": "Recentes",
+    "explore-new-songs": "Explore novas músicas",
+    "home": "Início",
+    "no-recommendation": "Nenhuma recomendação disponível",
+
+    "library": "Biblioteca",
+    "your-playlist": "Sua playlist",
+    "user-not-logged-in-playlist": "Usuário não está logado. Faça login para ver sua playlist.",
+    "dont-have-songs-playlist": "Você não tem músicas na sua playlist. Pesquise e adicione algumas!",
+
+    "search": "Buscar",
+    "browse": "Explorar tudo",
+    "wanna-play": "O que você quer ouvir?",
+    "no-results": "Nenhum resultado",
+
+    "danceEletronic": "Eletrônica",
+    "rock": "Rock",
+    "jazz": "Jazz",
+    "r-and-b": "Rhythm and Blues (R&B)",
+    "country-music": "Música Country",
+    "pop": "Pop",
+    "hip-hop": "Hip-hop",
+    "classical": "Música Clássica",
+    "reggae": "Reggae",
+    "bossa-nova": "Bossa Nova",
+    "samba": "Samba",
+    "funk": "Funk",
+
+    "track-name": "Nome da faixa",
+    "my-songs": "Minhas músicas",
+    "log-out": "Sair"
+}

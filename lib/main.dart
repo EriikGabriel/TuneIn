@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:projeto_final/pages/login_page.dart';
 import 'package:projeto_final/pages/main_page.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:projeto_final/providers/theme_provider.dart';
 
 import 'firebase/firebase_options.dart';
@@ -16,7 +17,12 @@ Future<void> main() async {
   } catch (e) {
     print('Erro ao inicializar o Firebase: $e');
   }
-  runApp(const ProviderScope(child: MainApp()));
+
+  var delegate = await LocalizationDelegate.create(
+      fallbackLocale: 'pt_br',
+      supportedLocales: ['en', 'pt_br']);
+
+  runApp(LocalizedApp(delegate, ProviderScope(child: MainApp())));
 }
 
 class MainApp extends ConsumerWidget {
@@ -25,15 +31,18 @@ class MainApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeData = ref.watch(themeProvider);
-
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      initialRoute: '/login',
-      routes: {
-        '/login': (ctx) => const LoginPage(),
-        '/main': (ctx) => const MainPage(),
-      },
-      theme: themeData,
+    
+    return LocalizationProvider(
+      state: LocalizationProvider.of(context).state,
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        initialRoute: '/login',
+        routes: {
+          '/login': (ctx) => const LoginPage(),
+          '/main': (ctx) => const MainPage(),
+        },
+        theme: themeData,
+      )
     );
   }
 }

@@ -10,6 +10,8 @@ import 'package:projeto_final/models/auth_model.dart';
 import 'package:projeto_final/theme/app_theme.dart';
 import 'package:projeto_final/types/login.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
+import 'package:flutter_translate/flutter_translate.dart';
+
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -26,14 +28,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final _usernameFocusNode = FocusNode();
   final _emailFocusNode = FocusNode();
   final _passwordFocusNode = FocusNode();
+  final List<String> _localeCodes = ['en', 'pt_br'];
 
   bool _passwordVisibility = false;
   LoginMode _mode = LoginMode.signIn;
 
   // Validação simples
   String? _validateNotEmpty(String? value) {
-    return (value == null || value.isEmpty) ? 'Campo obrigatório' : null;
+    return (value == null || value.isEmpty) ? translate('mandatory-field') : null;
   }
+
+
+  Future<void> _changeLanguage(int index) async {
+    setState(() {
+      changeLocale(context, _localeCodes[index]);
+    });
+  }
+
 
   // Lista de idiomas para o dropdown
   final List<bool> selectedLanguage = <bool>[true, false];
@@ -84,8 +95,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           } else {
             showSuccessToast(
               context: context,
-              title: "Success",
-              content: "User created!",
+              title: translate("success"),
+              content: translate("user-created"),
             );
 
             user.updateDisplayName(username);
@@ -94,8 +105,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         } else {
           showErrorToast(
             context: context,
-            title: "Error",
-            content: " Wrong user or password",
+            title: translate("error"),
+            content: translate("wrong-user-or-password"),
           );
         }
       } catch (e) {
@@ -103,8 +114,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
         showErrorToast(
           context: context,
-          title: "Error",
-          content: "Something went wrong. Please try again",
+          title: translate("error"),
+          content: translate("something-wrong"),
         );
       }
     }
@@ -156,7 +167,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             ),
                             const SizedBox(height: 5),
                             Text(
-                              'Music for everyone',
+                              translate("music-for-everyone"),
                               // Utilizando bodyMedium (em vez de bodyText2)
                               style: Theme.of(
                                 context,
@@ -184,7 +195,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                     cursorColor: primaryText,
                                     decoration: InputDecoration(
                                       isDense: true,
-                                      hintText: 'Username',
+                                      hintText: translate("username"),
                                       hintStyle: Theme.of(context)
                                           .textTheme
                                           .bodyLarge!
@@ -269,7 +280,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                   cursorColor: primaryText,
                                   decoration: InputDecoration(
                                     isDense: true,
-                                    hintText: 'Password',
+                                    hintText: translate("password"),
                                     hintStyle: Theme.of(context)
                                         .textTheme
                                         .bodyLarge!
@@ -349,7 +360,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 decoration: BoxDecoration(color: secondaryText),
                               ),
                               Text(
-                                ' OR ',
+                                translate("or"),
                                 style: Theme.of(
                                   context,
                                 ).textTheme.bodyMedium!.copyWith(
@@ -379,7 +390,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                 size: 15,
                                 color: primaryText,
                               ),
-                              label: const Text('Continue with Google'),
+                              label: Text(translate("continue-w-google")),
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: primaryText,
                                 side: BorderSide(color: primaryText, width: 2),
@@ -403,8 +414,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               TextSpan(
                                 text:
                                     _mode == LoginMode.signIn
-                                        ? "Don't have an account? "
-                                        : "Already have an account? ",
+                                        ? translate("dont-have-account")
+                                        : translate("already-have-account"),
                               ),
                               TextSpan(
                                 text:
@@ -436,6 +447,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         if (_mode == LoginMode.signIn)
                           ToggleButtons(
                             onPressed: (int index) {
+                              _changeLanguage(index);
                               setState(() {
                                 for (
                                   int i = 0;

@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:projeto_final/pages/home_page.dart';
 import 'package:projeto_final/pages/library_page.dart';
 import 'package:projeto_final/pages/search_page.dart';
@@ -43,12 +44,12 @@ class _MainPageState extends State<MainPage> {
           type: BottomNavigationBarType.fixed,
           currentIndex: _currentIndex,
           onTap: (int index) => setState(() => _currentIndex = index),
-          items: const [
-            BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Icons.search), label: 'Search'),
+          items: [
+            BottomNavigationBarItem(icon: Icon(Icons.home), label: translate("home")),
+            BottomNavigationBarItem(icon: Icon(Icons.search), label: translate("search")),
             BottomNavigationBarItem(
               icon: Icon(Icons.library_music),
-              label: 'Library',
+              label: translate("library"),
             ),
           ],
         ),

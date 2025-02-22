@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:projeto_final/components/header.dart';
 import 'package:projeto_final/components/music_item_card.dart';
@@ -36,11 +37,11 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildHeader(),
-                _buildSectionTitle('Recents', theme.primary, theme.secondary),
+                _buildSectionTitle(translate('recents'), theme.primary, theme.secondary),
                 _buildRecentsGrid(),
                 const SizedBox(height: 40),
                 _buildSectionTitle(
-                  'Explore new music',
+                  translate("explore-new-songs"),
                   theme.primary,
                   theme.secondary,
                 ),
@@ -56,7 +57,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _buildHeader() => Padding(
     padding: const EdgeInsets.symmetric(horizontal: 20),
-    child: const Header(title: 'Home'),
+    child: Header(title: translate('home')),
   );
 
   Widget _buildSectionTitle(String title, Color primary, Color secondary) =>
@@ -102,7 +103,7 @@ class _HomePageState extends State<HomePage> {
       }
       final recommendations = snapshot.data ?? [];
       if (recommendations.isEmpty) {
-        return const Center(child: Text('No recommendations available.'));
+        return Center(child: Text(translate("no-recommendation")));
       }
       return ListView.separated(
         padding: const EdgeInsets.symmetric(horizontal: 20),

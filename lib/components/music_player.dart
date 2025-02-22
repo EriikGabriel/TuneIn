@@ -1,5 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MusicPlayer extends StatefulWidget {
@@ -42,7 +43,7 @@ class _MusicPlayerState extends State<MusicPlayer> {
     return Column(
       children: [
         Text(
-          'Music Name',
+          translate("track-name"),
           style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.bold),
         ),
         IconButton(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_translate/flutter_translate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:projeto_final/components/header.dart';
 import 'package:projeto_final/components/music_genre_card.dart';
@@ -7,6 +8,7 @@ import 'package:projeto_final/components/music_item_card.dart';
 import 'package:projeto_final/models/auth_model.dart';
 import 'package:projeto_final/models/firebase_model.dart';
 import 'package:projeto_final/models/spotify_model.dart';
+import 'package:projeto_final/providers/user_provider.dart';
 import 'package:projeto_final/theme/app_theme.dart';
 import 'package:projeto_final/types/musical_genre.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
@@ -68,7 +70,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
       width: MediaQuery.of(context).size.width,
       height: 80,
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Header(title: "Search", searchBar: _buildSearchBar()),
+      child: Header(title: translate("search"), searchBar: _buildSearchBar()),
     );
   }
 
@@ -78,7 +80,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
       child: Align(
         alignment: Alignment.centerLeft,
         child: GradientText(
-          'Browse all',
+          translate("browse"),
           style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.bold),
           colors: [primaryColor, secondaryColor],
           gradientDirection: GradientDirection.ltr,
@@ -103,7 +105,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
       focusNode: _textFieldFocusNode,
       decoration: InputDecoration(
         isDense: true,
-        hintText: "What do you want to play?",
+        hintText: translate("wanna-play"),
         hintStyle: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.w500,
@@ -160,7 +162,7 @@ class _SearchPageState extends ConsumerState<SearchPage> {
       return const Center(child: CircularProgressIndicator());
     }
     if (_searchResult.isEmpty) {
-      return const Center(child: Text('No results.'));
+      return Center(child: Text(translate("no-results")));
     }
 
     return FutureBuilder<List<bool>>(
