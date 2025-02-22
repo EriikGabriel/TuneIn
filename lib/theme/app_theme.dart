@@ -8,16 +8,25 @@ extension CustomColorScheme on ColorScheme {
   Color get alternate => const Color(0xFF262D34);
 
   // Utility Colors
-  Color get primaryText => const Color(0xFFFFFFFF);
-  Color get secondaryText => const Color(0xFF95A1AC);
-  Color get primaryBackground => const Color(0xFF1D2428);
-  Color get secondaryBackground => const Color(0xFF14181B);
+  Color get primaryText =>
+      brightness == Brightness.dark
+          ? const Color(0xFFFFFFFF) // Cor do texto primário no tema escuro
+          : const Color(0xFF000000); // Cor do texto primário no tema claro
 
-  // Accent Colors
-  Color get accent1 => const Color(0xFF13803B);
-  Color get accent2 => const Color(0xff4d39d2c0);
-  Color get accent3 => const Color(0xff4dee8b60);
-  Color get accent4 => const Color(0xffb2262d34);
+  Color get secondaryText =>
+      brightness == Brightness.dark
+          ? const Color(0xFF95A1AC) // Cor do texto secundário no tema escuro
+          : const Color(0xFF6B6B6B); // Cor do texto secundário no tema claro
+
+  Color get primaryBackground =>
+      brightness == Brightness.dark
+          ? const Color(0xFF1D2428) // Cor de fundo primário no tema escuro
+          : const Color(0xFFFFFFFF); // Cor de fundo primário no tema claro
+
+  Color get secondaryBackground =>
+      brightness == Brightness.dark
+          ? const Color(0xFF14181B) // Cor de fundo secundário no tema escuro
+          : const Color(0xFFF6F6F6); // Cor de fundo secundário no tema claro
 
   // Semantic Colors
   Color get success => const Color(0xFF249689);
@@ -26,74 +35,40 @@ extension CustomColorScheme on ColorScheme {
   Color get info => const Color(0xFFFFFFFF);
 }
 
-final ThemeData appThemeData = ThemeData(
+final ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
-
   primaryColor: const Color(0xFF1ED760),
-  colorScheme: const ColorScheme(
-    brightness: Brightness.light,
-    primary: Color(0xFF1ED760), // Primary
+  colorScheme: const ColorScheme.light(
+    primary: Color(0xFF1ED760),
     onPrimary: Colors.white,
-    secondary: Color(0xFF33B0A8), // Secondary
+    secondary: Color(0xFF33B0A8),
     onSecondary: Colors.white,
-    surface: Color(0xFF14181B), // Secondary Background
+    surface: Colors.white,
+    onSurface: Colors.black,
+    error: Color(0xFFD32F2F),
+    onError: Colors.white,
+  ),
+  scaffoldBackgroundColor: Colors.white,
+  textTheme: const TextTheme(
+    bodyLarge: TextStyle(fontSize: 16, color: Colors.black),
+  ),
+);
+
+final ThemeData darkTheme = ThemeData(
+  brightness: Brightness.dark,
+  primaryColor: const Color(0xFF1ED760),
+  colorScheme: const ColorScheme.dark(
+    primary: Color(0xFF1ED760),
+    onPrimary: Colors.white,
+    secondary: Color(0xFF33B0A8),
+    onSecondary: Colors.white,
+    surface: Color.fromARGB(255, 255, 255, 255),
     onSurface: Colors.white,
     error: Color(0xFFD32F2F),
     onError: Colors.white,
   ),
-  scaffoldBackgroundColor: Colors.black, // Usa o primary background
-
+  scaffoldBackgroundColor: Colors.black,
   textTheme: const TextTheme(
-    headlineLarge: TextStyle(
-      fontFamily: 'Oswald',
-      fontSize: 32,
-      fontWeight: FontWeight.bold,
-      color: Color(0xFF26344A),
-    ),
-    bodyLarge: TextStyle(
-      fontFamily: 'Inter',
-      fontSize: 16,
-      color: Color(0xFF26344A),
-    ),
-    bodyMedium: TextStyle(
-      fontFamily: 'Inter',
-      fontSize: 14,
-      color: Color(0xFF26344A),
-    ),
-  ),
-
-  elevatedButtonTheme: ElevatedButtonThemeData(
-    style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xFF1ED760),
-      foregroundColor: Colors.white,
-      textStyle: const TextStyle(
-        fontFamily: 'Inter',
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-      ),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-    ),
-  ),
-
-  inputDecorationTheme: InputDecorationTheme(
-    filled: true,
-    fillColor: Colors.white,
-    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-    enabledBorder: OutlineInputBorder(
-      borderSide: BorderSide.none,
-      borderRadius: BorderRadius.circular(8),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderSide: const BorderSide(color: Color(0xFF1ED760), width: 2),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    errorBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.red.shade700, width: 2),
-      borderRadius: BorderRadius.circular(8),
-    ),
-    focusedErrorBorder: OutlineInputBorder(
-      borderSide: BorderSide(color: Colors.red.shade700, width: 2),
-      borderRadius: BorderRadius.circular(8),
-    ),
+    bodyLarge: TextStyle(fontSize: 16, color: Colors.white),
   ),
 );

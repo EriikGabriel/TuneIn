@@ -1,21 +1,24 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:projeto_final/components/header.dart';
 import 'package:projeto_final/components/music_genre_card.dart';
 import 'package:projeto_final/components/music_item_card.dart';
-import 'package:projeto_final/models/spotifyReq.dart';
+import 'package:projeto_final/models/auth_model.dart';
+import 'package:projeto_final/models/firebase_model.dart';
+import 'package:projeto_final/models/spotify_model.dart';
 import 'package:projeto_final/theme/app_theme.dart';
 import 'package:projeto_final/types/musical_genre.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 
-class SearchPage extends StatefulWidget {
+class SearchPage extends ConsumerStatefulWidget {
   const SearchPage({super.key});
 
   @override
-  State<SearchPage> createState() => _SearchPageState();
+  ConsumerState<SearchPage> createState() => _SearchPageState();
 }
 
-class _SearchPageState extends State<SearchPage> {
+class _SearchPageState extends ConsumerState<SearchPage> {
   final TextEditingController _textController = TextEditingController();
   final FocusNode _textFieldFocusNode = FocusNode();
   final scaffoldKey = GlobalKey<ScaffoldState>();
@@ -39,28 +42,11 @@ class _SearchPageState extends State<SearchPage> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
         key: scaffoldKey,
-        backgroundColor: Colors.black,
         body: SafeArea(
           child: Column(
             children: [
               _buildHeader(),
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: GradientText(
-                    'Browse all',
-                    style: GoogleFonts.inter(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    colors: [primaryColor, secondaryColor],
-                    gradientDirection: GradientDirection.ltr,
-                    gradientType: GradientType.linear,
-                  ),
-                ),
-              ),
-
+              _buildBrowseTitle(primaryColor, secondaryColor),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -78,57 +64,33 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   Widget _buildHeader() {
-    final primaryText = Colors.white;
-
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 80,
       padding: const EdgeInsets.symmetric(horizontal: 20),
-      child: Row(
-        children: [
-          Row(
-            children: [
-              ClipRRect(
-                borderRadius: BorderRadius.circular(100),
-                child: CachedNetworkImage(
-                  fadeInDuration: const Duration(milliseconds: 500),
-                  fadeOutDuration: const Duration(milliseconds: 500),
-                  imageUrl:
-                      'https://api.dicebear.com/9.x/fun-emoji/svg?seed=Brian',
-                  width: 50,
-                  height: 50,
-                  fit: BoxFit.fill,
-                ),
-              ),
-              const SizedBox(width: 20),
-              Text(
-                'Search',
-                style: GoogleFonts.inter(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  color: primaryText,
-                ),
-              ),
-            ],
-          ),
-          const Spacer(),
-          SizedBox(
-            width: MediaQuery.of(context).size.width * 0.5,
-            child: _buildSearchBar(),
-          ),
-          const Spacer(),
-        ],
+      child: Header(title: "Search", searchBar: _buildSearchBar()),
+    );
+  }
+
+  Widget _buildBrowseTitle(Color primaryColor, Color secondaryColor) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: GradientText(
+          'Browse all',
+          style: GoogleFonts.inter(fontSize: 24, fontWeight: FontWeight.bold),
+          colors: [primaryColor, secondaryColor],
+          gradientDirection: GradientDirection.ltr,
+          gradientType: GradientType.linear,
+        ),
       ),
     );
   }
 
   Widget _buildContent() {
-  if (_searched) {
-    return _buildSearchResult();
-  } else {
-    return _buildGrid();
+    return _searched ? _buildSearchResult() : _buildGenreGrid();
   }
-}
 
   Widget _buildSearchBar() {
     final secondaryBackground =
@@ -147,66 +109,93 @@ class _SearchPageState extends State<SearchPage> {
           fontWeight: FontWeight.w500,
           color: secondaryText,
         ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide.none,
-          borderRadius: BorderRadius.circular(8),
-        ),
+        enabledBorder: _inputBorder(),
+        focusedBorder: _inputBorder(),
         filled: true,
         fillColor: secondaryBackground,
         prefixIcon: Icon(Icons.search, color: secondaryText),
       ),
       style: TextStyle(color: primaryText),
       cursorColor: primaryText,
-      onSubmitted: (query) async {
+      onSubmitted: _onSearchSubmitted,
+    );
+  }
+
+  OutlineInputBorder _inputBorder() {
+    return OutlineInputBorder(
+      borderSide: BorderSide.none,
+      borderRadius: BorderRadius.circular(8),
+    );
+  }
+
+  void _onSearchSubmitted(String query) {
+    setState(() {
+      _isLoading = true;
+      _searched = true;
+    });
+    _searchTracks(query);
+  }
+
+  Future<void> _searchTracks(String query) async {
+    try {
+      final result = await SpotifyModel().searchTracks(query);
+      if (mounted) {
         setState(() {
-          _isLoading = true;
-          _searched = true;
-        });
-
-        try {
-          Spotifyreq spotifyreq = Spotifyreq();
-
-          _searchResult = await spotifyreq.searchTracks(query);
-
-          setState(() {
+          _searchResult = result;
           _isLoading = false;
-          });
+        });
+      }
+    } catch (e) {
+      print('Error during search: $e');
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
 
-        }catch (e) {
-          print('Erro durante a busca: $e');
+  Widget _buildSearchResult() {
+    final user = ref.watch(userProvider);
+
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (_searchResult.isEmpty) {
+      return const Center(child: Text('No results.'));
+    }
+
+    return FutureBuilder<List<bool>>(
+      future: Future.wait(
+        _searchResult.map<Future<bool>>((item) {
+          var artist = item['artist'];
+          var trackName = item['name'];
+          return FirebaseModel().isSongInPlaylist(artist, trackName, user!);
+        }),
+      ),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
         }
+
+        final statusList = snapshot.data!;
+        return ListView.separated(
+          padding: EdgeInsets.zero,
+          itemCount: _searchResult.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 10),
+          itemBuilder: (context, index) {
+            final item = _searchResult[index];
+            return MusicItemCard(
+              artist: item['artist'],
+              trackName: item['name'],
+              imageUrl: item['imageUrl'],
+              showFavoriteIcon: statusList[index],
+            );
+          },
+        );
       },
     );
   }
 
-  Widget _buildSearchResult(){
-    if (_isLoading) {
-      return Center(child: CircularProgressIndicator());
-    } 
-    else if(_searchResult.isEmpty){
-      return Center(child: Text('No results.'),);
-    }
-    else{
-      return ListView.separated(
-        padding: EdgeInsets.zero,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        itemCount: 5,
-        separatorBuilder:
-            (context, index) =>
-                const SizedBox(height: 10),
-        itemBuilder: (context, index) {
-          return MusicItemCard(artist: _searchResult[index]['artist'], trackName: _searchResult[index]['name'], imageUrl: _searchResult[index]['imageUrl']);
-        },
-      );
-    }
-  }
-
-  Widget _buildGrid() {
+  Widget _buildGenreGrid() {
     return Stack(
       children: [
         GridView.builder(
@@ -217,35 +206,60 @@ class _SearchPageState extends State<SearchPage> {
             mainAxisSpacing: 10,
             childAspectRatio: 2,
           ),
-          itemCount: 12,
+          itemCount: MusicalGenre.values.length,
           itemBuilder: (context, i) {
             final genre = MusicalGenre.values[i];
-            return MusicGenreCard(
-              genreName: getGenreName(genre),
-              icon: musicalGenreIcons[genre] ?? Icons.music_note,
-              backgroundColor: Colors.primaries[i % Colors.primaries.length],
-              textColor: Colors.white,
+            return GestureDetector(
+              onTap: () => _onGenreTap(genre),
+              child: MouseRegion(
+                cursor: SystemMouseCursors.click,
+                child: MusicGenreCard(
+                  genreName: getGenreName(genre),
+                  icon: musicalGenreIcons[genre] ?? Icons.music_note,
+                  backgroundColor:
+                      Colors.primaries[i % Colors.primaries.length],
+                  textColor: Colors.white,
+                ),
+              ),
             );
           },
         ),
-        Positioned.fill(
-          child: IgnorePointer(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withValues(alpha: 0.6), // Mais escuro no topo
-                    Colors.transparent, // Transparente no meio
-                    Colors.black.withValues(alpha: 0.6), // Mais escuro na base
-                  ],
-                ),
-              ),
+        _buildGradientOverlay(),
+      ],
+    );
+  }
+
+  void _onGenreTap(MusicalGenre genre) async {
+    setState(() {
+      _isLoading = true;
+      _searched = true;
+    });
+
+    final spotifyreq = SpotifyModel();
+    _searchResult = await spotifyreq.searchTracksByGenre(getGenreName(genre));
+
+    if (mounted) {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  Widget _buildGradientOverlay() {
+    return Positioned.fill(
+      child: IgnorePointer(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Theme.of(context).scaffoldBackgroundColor.withAlpha(153),
+                Colors.transparent,
+                Theme.of(context).scaffoldBackgroundColor.withAlpha(153),
+              ],
             ),
           ),
         ),
-      ],
+      ),
     );
   }
 }

@@ -52,7 +52,10 @@ class _SmallCardState extends State<SmallCard> {
             style: GoogleFonts.inter(
               fontSize: 16,
               fontWeight: FontWeight.w500,
-              color: Colors.white, // ou outra cor definida no tema
+              color:
+                  Theme.of(
+                    context,
+                  ).colorScheme.primaryText, // ou outra cor definida no tema
             ),
           ),
         ],

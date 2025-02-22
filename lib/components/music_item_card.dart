@@ -2,39 +2,87 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:projeto_final/models/add_to_playlist.dart';
-import 'package:projeto_final/models/authenticate.dart';
+import 'package:projeto_final/models/auth_model.dart';
+import 'package:projeto_final/models/firebase_model.dart';
 import 'package:projeto_final/theme/app_theme.dart';
 
-class MusicItemCard extends StatefulWidget {
+class MusicItemCard extends ConsumerStatefulWidget {
   final String trackName;
   final String artist;
   final String imageUrl;
-  
-  const MusicItemCard({super.key, required this.trackName, required this.artist, required this.imageUrl});
+  final bool showFavoriteIcon;
+  final EdgeInsetsGeometry favPadding;
+
+  const MusicItemCard({
+    super.key,
+    required this.trackName,
+    required this.artist,
+    required this.imageUrl,
+    this.showFavoriteIcon = false,
+    this.favPadding = const EdgeInsets.all(0),
+  });
 
   @override
-  State<MusicItemCard> createState() => _MusicItemCardState();
+  ConsumerState<MusicItemCard> createState() => _MusicItemCardState();
 }
 
-class _MusicItemCardState extends State<MusicItemCard> {
+class _MusicItemCardState extends ConsumerState<MusicItemCard> {
+  bool isFavorite = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _checkIfSongIsFavorite();
+  }
+
+  Future<void> _checkIfSongIsFavorite() async {
+    final user = ref.read(userProvider);
+    if (user != null) {
+      final favoriteStatus = await FirebaseModel().isSongInPlaylist(
+        widget.artist,
+        widget.trackName,
+        user,
+      );
+      if (mounted) {
+        setState(() {
+          isFavorite = favoriteStatus;
+        });
+      }
+    }
+  }
+
+  Future<void> _toggleFavorite() async {
+    final user = ref.read(userProvider);
+    if (user != null) {
+      if (isFavorite) {
+        await FirebaseModel().removeSong(widget.artist, widget.trackName, user);
+      } else {
+        await FirebaseModel().addSong(
+          widget.artist,
+          widget.trackName,
+          widget.imageUrl,
+          user,
+        );
+      }
+      if (mounted) {
+        setState(() {
+          isFavorite = !isFavorite;
+        });
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final primaryBackground = Theme.of(context).colorScheme.primaryBackground;
-    final secondaryBackground =
-        Theme.of(context).colorScheme.secondaryBackground;
-    final primaryColor = Theme.of(context).colorScheme.primary;
-    final infoColor = Theme.of(context).colorScheme.info;
-    final primaryText = Theme.of(context).colorScheme.primaryText;
-    final secondaryText = Theme.of(context).colorScheme.secondaryText;
+    final theme = Theme.of(context).colorScheme;
 
     return Container(
       width: MediaQuery.of(context).size.width,
       height: 90,
       decoration: BoxDecoration(
-        color: secondaryBackground,
+        color: theme.secondaryBackground,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: primaryBackground),
+        border: Border.all(color: theme.primaryBackground),
       ),
       padding: const EdgeInsets.all(15),
       child: Row(
@@ -47,29 +95,30 @@ class _MusicItemCardState extends State<MusicItemCard> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) {
-                        return Scaffold(
-                          appBar: AppBar(
-                            backgroundColor: Colors.black,
-                            leading: IconButton(
-                              icon: const Icon(Icons.close),
-                              onPressed: () => Navigator.pop(context),
+                      builder:
+                          (context) => Scaffold(
+                            appBar: AppBar(
+                              backgroundColor: theme.primary,
+                              leading: IconButton(
+                                icon: Icon(
+                                  Icons.close,
+                                  color: theme.primaryText,
+                                ),
+                                onPressed: () => Navigator.pop(context),
+                              ),
                             ),
-                          ),
-                          backgroundColor: Colors.black,
-                          body: Center(
-                            child: Hero(
-                              tag: 'imageTag',
-                              child: InteractiveViewer(
-                                child: Image.network(
-                                  widget.imageUrl,
-                                  fit: BoxFit.contain,
+                            body: Center(
+                              child: Hero(
+                                tag: 'imageTag',
+                                child: InteractiveViewer(
+                                  child: Image.network(
+                                    widget.imageUrl,
+                                    fit: BoxFit.contain,
+                                  ),
                                 ),
                               ),
                             ),
                           ),
-                        );
-                      },
                     ),
                   );
                 },
@@ -87,7 +136,6 @@ class _MusicItemCardState extends State<MusicItemCard> {
                 ),
               ),
               const SizedBox(width: 20),
-              // Dados da música
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -97,23 +145,22 @@ class _MusicItemCardState extends State<MusicItemCard> {
                     style: GoogleFonts.inter(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
-                      color: primaryText,
+                      color: theme.primaryText,
                     ),
                   ),
-                  const SizedBox(height: 5),
                   Row(
-                    spacing: 10,
                     children: [
                       Icon(
                         Icons.explicit_rounded,
                         size: 24,
-                        color: secondaryText,
+                        color: theme.secondaryText,
                       ),
+                      const SizedBox(width: 5),
                       Text(
                         widget.artist,
                         style: GoogleFonts.inter(
                           fontSize: 16,
-                          color: secondaryText,
+                          color: theme.secondaryText,
                         ),
                       ),
                     ],
@@ -122,28 +169,16 @@ class _MusicItemCardState extends State<MusicItemCard> {
               ),
             ],
           ),
-          // Botões de ação
-          Row(
-            children: [
-              IconButton(
-                icon: Icon(
-                  Icons.favorite_rounded,
-                  color: primaryColor,
-                  size: 30,
-                ),
-                onPressed: () {
-                  print('Favorite pressed');
-                },
+          Padding(
+            padding: widget.favPadding,
+            child: IconButton(
+              icon: Icon(
+                isFavorite ? Icons.favorite_rounded : Icons.add,
+                color: isFavorite ? theme.primary : theme.info,
+                size: 30,
               ),
-              const SizedBox(width: 20),
-              IconButton(
-                icon: Icon(Icons.add, color: infoColor, size: 30),
-                onPressed: () {
-                  final user = ProviderScope.containerOf(context).read(userProvider);
-                  BackendPlayList().addSong(widget.artist, widget.trackName, widget.imageUrl, user!);
-                },
-              ),
-            ],
+              onPressed: _toggleFavorite,
+            ),
           ),
         ],
       ),

@@ -1,22 +1,24 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:projeto_final/models/authenticate.dart';
+import 'package:projeto_final/helpers/toast_helper.dart';
+import 'package:projeto_final/models/auth_model.dart';
 import 'package:projeto_final/theme/app_theme.dart';
 import 'package:projeto_final/types/login.dart';
 import 'package:simple_gradient_text/simple_gradient_text.dart';
 
-
-
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   // Controllers e variáveis de exemplo
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -63,6 +65,50 @@ class _LoginPageState extends State<LoginPage> {
     final secondaryBackground = Theme.of(ctx).colorScheme.secondaryBackground;
     final errorColor = Theme.of(ctx).colorScheme.error;
 
+    Future<void> handleLogin() async {
+      try {
+        final username = _usernameController.text.trim();
+        final email = _emailController.text.trim();
+        final password = _passwordController.text.trim();
+
+        var user = await AuthModel().sign(
+          email: email,
+          password: password,
+          mode: _mode,
+          ref: ref,
+        );
+
+        if (user != null) {
+          if (_mode == LoginMode.signIn) {
+            Navigator.of(context).pushReplacementNamed('/main');
+          } else {
+            showSuccessToast(
+              context: context,
+              title: "Success",
+              content: "User created!",
+            );
+
+            user.updateDisplayName(username);
+            setState(() => _mode = LoginMode.signIn);
+          }
+        } else {
+          showErrorToast(
+            context: context,
+            title: "Error",
+            content: " Wrong user or password",
+          );
+        }
+      } catch (e) {
+        if (kDebugMode) print("Error during authentication: $e");
+
+        showErrorToast(
+          context: context,
+          title: "Error",
+          content: "Something went wrong. Please try again",
+        );
+      }
+    }
+
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
@@ -98,7 +144,6 @@ class _LoginPageState extends State<LoginPage> {
                           children: [
                             GradientText(
                               'TuneIn',
-                              // Utilizando headlineLarge (em vez de headline4)
                               style: Theme.of(
                                 context,
                               ).textTheme.headlineLarge!.copyWith(
@@ -127,7 +172,6 @@ class _LoginPageState extends State<LoginPage> {
                         Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            // Campo de Username (apenas no signUp)
                             if (_mode == LoginMode.signUp)
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 20),
@@ -141,7 +185,6 @@ class _LoginPageState extends State<LoginPage> {
                                     decoration: InputDecoration(
                                       isDense: true,
                                       hintText: 'Username',
-                                      // Usando bodyLarge (em vez de bodyText1)
                                       hintStyle: Theme.of(context)
                                           .textTheme
                                           .bodyLarge!
@@ -173,7 +216,6 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                 ),
                               ),
-                            // Campo de Email
                             Padding(
                               padding: const EdgeInsets.only(bottom: 20),
                               child: SizedBox(
@@ -215,7 +257,6 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                             ),
-                            // Campo de Senha
                             Padding(
                               padding: const EdgeInsets.only(bottom: 20),
                               child: SizedBox(
@@ -269,47 +310,13 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                             ),
-                            // Botão de ação (Sign In / Sign Up)
                             SizedBox(
                               width: width * 0.2,
                               height: 40,
                               child: ElevatedButton(
-                                onPressed: () async {
-                                  var user = await Authenticate().sign(
-                                    email: _emailController.text,
-                                    password: _passwordController.text,
-                                    mode: _mode,
-                                  );
-
-
-                                  if (user != null) {
-                                    ProviderScope.containerOf(context).read(userProvider.notifier).setUser(user);
-                                    Navigator.pushNamed(context, '/main');
-                                  }
-                                  else{
-                                    showDialog(
-                                      context: context,
-                                      builder:(context) {
-                                        return AlertDialog(
-                                          title: Text("Error!"),
-                                          content: Text("Wrong user or password"),
-                                          actions: [
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: Text("Close Tab"),
-                                            )
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  }
-                                },
+                                onPressed: handleLogin,
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: primaryText,
-                                  // foregroundColor agora é definido via "onPrimary" para o texto,
-                                  // mas aqui usamos o padrão do tema para o botão
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
@@ -426,12 +433,10 @@ class _LoginPageState extends State<LoginPage> {
                             ],
                           ),
                         ),
-                        // Exemplo simples de seletor de idioma
                         if (_mode == LoginMode.signIn)
                           ToggleButtons(
                             onPressed: (int index) {
                               setState(() {
-                                // The button that is tapped is set to true, and the others to false.
                                 for (
                                   int i = 0;
                                   i < selectedLanguage.length;
